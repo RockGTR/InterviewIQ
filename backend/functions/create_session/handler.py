@@ -62,7 +62,10 @@ def lambda_handler(event: dict, context) -> dict:
         )
 
         logger.info("Created session %s for %s", session["sessionId"], company_name)
-        return success_response(session, 201)
+        response = success_response(session, 201)
+        # Add sessionId at top level for Step Functions to extract
+        response["sessionId"] = session["sessionId"]
+        return response
 
     except Exception as e:
         logger.error("Failed to create session: %s", e)
