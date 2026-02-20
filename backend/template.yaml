@@ -14,7 +14,7 @@ Parameters:
   # The Bedrock model ID for Claude. Configurable per environment.
   BedrockModelId:
     Type: String
-    Default: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+    Default: "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
     Description: "Amazon Bedrock model ID for AI generation"
 
   # Deployment stage name (dev, staging, prod)
