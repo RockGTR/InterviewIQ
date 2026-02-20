@@ -96,3 +96,18 @@
 - Demo recording / presentation prep
 
 **Requirements**: All previous phases complete
+
+---
+
+### Phase 6: Documentation & Workflows
+**Status**: 🔄 In Progress
+**Objective**: Comprehensive project documentation, developer guides, deployment workflows, and architecture docs
+**Time Budget**: ~2 hours
+**Deliverables**:
+- Root `README.md` — Project overview, architecture diagram, setup guide, API reference
+- Deployment workflow doc — SAM deploy, Amplify connect, env config
+- Developer onboarding guide — Local dev setup, project structure, contribution workflow
+- API reference — All endpoints with request/response examples
+- Architecture documentation — System design, data flow, service interactions
+
+**Requirements**: Phases 1-2 complete (verified ✅)
