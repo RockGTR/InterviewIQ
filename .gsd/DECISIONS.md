@@ -61,3 +61,23 @@
   1. Train/prompt the AI on expected output format
   2. Provide demo data for showcasing the system
   3. Serve as the "proprietary Texas A&M data" source
+
+---
+
+## Phase 3 Decisions (from `/discuss-phase 3`)
+
+### ADR-011: Maximize AI Quality via Comprehend
+**Date**: 2026-02-20
+**Decision**: Use Amazon Comprehend for sentiment and entity extraction to feed as structured context to Bedrock.
+**Rationale**: User prioritized the best output quality. Supplying structured NLP data alongside raw text helps Claude generate deeper, more nuanced questions.
+
+### ADR-012: Chained Prompts (Pipeline) Strategy
+**Date**: 2026-02-20
+**Decision**: Use a chained prompt approach (Option B) for generating the interview brief.
+**Rationale**: Breaking generation into steps (e.g., Profile -> Questions -> Flow) produces higher quality output and is easier to debug than one massive prompt.
+
+### ADR-013: Async Polling for Long-Running AI Tasks
+**Date**: 2026-02-20
+**Decision**: Handle API Gateway 29s timeouts using Step Functions async execution and frontend polling.
+**Rationale**: Professional approach for serverless AI workloads. API Gateway triggers Step Functions and immediately returns an execution ID (202 Accepted/200 OK). Frontend polls a status endpoint until complete.
+
