@@ -14,7 +14,7 @@ Parameters:
   # The Bedrock model ID for Claude. Configurable per environment.
   BedrockModelId:
     Type: String
-    Default: "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+    Default: "anthropic.claude-3-5-sonnet-20241022-v2:0"
     Description: "Amazon Bedrock model ID for AI generation"
 
   # Deployment stage name (dev, staging, prod)
@@ -26,7 +26,7 @@ Parameters:
   # AWS region for Bedrock (may differ from stack region)
   BedrockRegion:
     Type: String
-    Default: "us-east-1"
+    Default: "us-west-2"
     Description: "AWS region where Bedrock model is available"
 
 # =============================================================================
@@ -287,6 +287,8 @@ Resources:
               Action:
                 - bedrock:InvokeModel
                 - bedrock:InvokeModelWithResponseStream
+                - aws-marketplace:ViewSubscriptions
+                - aws-marketplace:Subscribe
               Resource: "*"
       Events:
         GenerateBrief:

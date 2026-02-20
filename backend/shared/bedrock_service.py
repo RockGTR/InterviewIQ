@@ -54,9 +54,9 @@ class BedrockService:
             region: AWS region for Bedrock. Defaults to BEDROCK_REGION env var.
         """
         self.model_id = model_id or os.environ.get(
-            "MODEL_ID", "us.anthropic.claude-3-5-sonnet-20241022-v2:0"
+            "MODEL_ID", "anthropic.claude-3-5-sonnet-20241022-v2:0"
         )
-        bedrock_region = region or os.environ.get("BEDROCK_REGION", "us-east-1")
+        bedrock_region = region or os.environ.get("BEDROCK_REGION", "us-west-2")
         self.client = boto3.client("bedrock-runtime", region_name=bedrock_region)
         logger.info("BedrockService initialized with model: %s in %s", self.model_id, bedrock_region)
 
