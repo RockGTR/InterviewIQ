@@ -1,6 +1,0 @@
-0000000000000000000000000000000000000000 9170056d4d2f39b70b69e9701f0006d0f71ee215 rockgtr <rahulyadav2798@gmail.com> 1771600826 -0600	commit (initial): chore: initialize GSD project
-9170056d4d2f39b70b69e9701f0006d0f71ee215 470d3ea243269531155b2223652153c7551a1dd2 rockgtr <rahulyadav2798@gmail.com> 1771602561 -0600	commit: docs(phase-1): research complete
-470d3ea243269531155b2223652153c7551a1dd2 41c9b5680ff28d2bb129cf0a474d9b04dafa9647 rockgtr <rahulyadav2798@gmail.com> 1771603003 -0600	commit: docs(phase-1): create 6 execution plans across 3 waves
-41c9b5680ff28d2bb129cf0a474d9b04dafa9647 e828c40d5fb1236a2055d270ffb6d958bd7c6701 rockgtr <rahulyadav2798@gmail.com> 1771603630 -0600	commit: feat(phase-1): complete backend — SAM template, Lambda handlers, shared services, Step Functions, mock data
-e828c40d5fb1236a2055d270ffb6d958bd7c6701 d9288bd21b0fc3e82f94c86df20a516229b152fd rockgtr <rahulyadav2798@gmail.com> 1771603983 -0600	commit: feat(phase-1): complete frontend — React scaffold, 4 routes, design system, API service, Amplify config
-d9288bd21b0fc3e82f94c86df20a516229b152fd d709036dae0902b89b4533a3ab30acde72d99646 rockgtr <rahulyadav2798@gmail.com> 1771604009 -0600	commit: docs(phase-1): mark phase 1 complete

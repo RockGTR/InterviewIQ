@@ -1,0 +1,44 @@
+# =============================================================================
+# InterviewIQ — .gitignore
+# =============================================================================
+
+# --- OS ---
+.DS_Store
+Icon?
+Thumbs.db
+
+# --- Google Drive sync artifacts ---
+.tmp.driveupload/
+
+# --- Node (frontend) ---
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# --- Python (backend) ---
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+
+# --- Lambda Layer build artifacts ---
+backend/layers/shared/python/
+backend/layers/shared/layer.zip
+
+# --- SAM build ---
+.aws-sam/
+samconfig.toml.backup
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Logs ---
+*.log
+npm-debug.log*
