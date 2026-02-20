@@ -1,0 +1,126 @@
+{
+    "gridflex_energy": {
+        "name": "GridFlex Energy",
+        "industry": "Virtual Power Plants (VPP) / Energy Technology",
+        "region": "Texas (ERCOT market)",
+        "stage": "Growth / Series B",
+        "description": "GridFlex Energy operates a virtual power plant platform that aggregates distributed energy resources (DERs) for grid stabilization in the ERCOT market. They coordinate residential solar panels, battery storage systems, and commercial loads to provide grid services.",
+        "business_model": "Aggregation platform for DERs, revenue from grid services and demand response programs",
+        "key_facts": [
+            "Operating in Texas's deregulated ERCOT energy market",
+            "Virtual power plant (VPP) aggregating distributed energy resources",
+            "Managing residential solar, battery storage, and commercial loads",
+            "Focus on grid stabilization and demand response",
+            "Software platform for real-time coordination of DERs"
+        ],
+        "competitors": [
+            "Sunnova",
+            "Sunrun",
+            "Tesla Virtual Power Plant",
+            "OhmConnect"
+        ],
+        "key_people": [],
+        "recent_news": [
+            "Expanding VPP capacity in Texas after grid reliability concerns"
+        ]
+    },
+    "lonestar_precision": {
+        "name": "LoneStar Precision Components",
+        "industry": "Precision Manufacturing / Aerospace & Defense",
+        "region": "Texas",
+        "stage": "Established / Growth",
+        "description": "LoneStar Precision Components is a precision machining and manufacturing company specializing in high-tolerance components for the aerospace and defense sectors. They operate advanced CNC machining capabilities.",
+        "business_model": "Contract manufacturing of precision components, engineering services",
+        "key_facts": [
+            "Precision machining for aerospace and defense industries",
+            "Advanced CNC machining capabilities",
+            "High-tolerance component manufacturing",
+            "Quality certifications (AS9100, ITAR registered)",
+            "Engineering and design services alongside manufacturing"
+        ],
+        "competitors": [
+            "Triumph Group",
+            "Spirit AeroSystems",
+            "Local precision shops"
+        ],
+        "key_people": [],
+        "recent_news": [
+            "Growing demand for aerospace components post-pandemic"
+        ]
+    },
+    "texas_mechanical": {
+        "name": "Texas Mechanical Services Group",
+        "industry": "Commercial HVAC / Mechanical Services",
+        "region": "Texas",
+        "stage": "Established / Expansion",
+        "description": "Texas Mechanical Services Group provides commercial HVAC installation, maintenance, and building automation services. They serve large commercial and institutional facilities across Texas.",
+        "business_model": "Service contracts, installation projects, building automation integration",
+        "key_facts": [
+            "Commercial HVAC installation and maintenance",
+            "Building automation and controls integration",
+            "Large commercial and institutional facility focus",
+            "Service contract recurring revenue model",
+            "Growing energy efficiency consulting services"
+        ],
+        "competitors": [
+            "Comfort Systems USA",
+            "Trane Technologies",
+            "Johnson Controls"
+        ],
+        "key_people": [],
+        "recent_news": [
+            "Expanding building automation services amid smart building trends"
+        ]
+    },
+    "launchstack_tech": {
+        "name": "LaunchStack Technologies",
+        "industry": "SaaS / Developer Tools",
+        "region": "Texas (Austin-area)",
+        "stage": "Early-stage / Seed",
+        "description": "LaunchStack Technologies is an early-stage SaaS company building developer productivity tools. Their platform helps development teams streamline deployment workflows and manage cloud infrastructure.",
+        "business_model": "SaaS subscription for developer tools, usage-based pricing tiers",
+        "key_facts": [
+            "Developer productivity and deployment automation platform",
+            "Cloud infrastructure management tools",
+            "SaaS subscription model with usage-based tiers",
+            "Target market: mid-size development teams",
+            "Early-stage with seed funding"
+        ],
+        "competitors": [
+            "Vercel",
+            "Netlify",
+            "Railway",
+            "Render"
+        ],
+        "key_people": [],
+        "recent_news": [
+            "Raising initial seed round",
+            "Building beta product"
+        ]
+    },
+    "prairielogic_ag": {
+        "name": "PrairieLogic Ag Systems",
+        "industry": "Agricultural Technology (AgTech)",
+        "region": "Texas / Great Plains",
+        "stage": "Growth",
+        "description": "PrairieLogic Ag Systems develops precision agriculture technology for row crop operations. Their system combines sensor data, weather analytics, and machine learning to optimize planting, irrigation, and harvesting decisions.",
+        "business_model": "Hardware + SaaS platform for precision agriculture, per-acre pricing",
+        "key_facts": [
+            "Precision agriculture technology for row crops",
+            "Sensor-based monitoring systems",
+            "Weather analytics and machine learning optimization",
+            "Planting, irrigation, and harvest decision support",
+            "Per-acre SaaS pricing model"
+        ],
+        "competitors": [
+            "Climate Corporation",
+            "Farmers Edge",
+            "John Deere Operations Center"
+        ],
+        "key_people": [],
+        "recent_news": [
+            "Expanding sensor network coverage",
+            "Partnering with Texas A&M AgriLife"
+        ]
+    }
+}

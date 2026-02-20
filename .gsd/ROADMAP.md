@@ -2,6 +2,7 @@
 
 > **Current Phase**: Not started
 > **Milestone**: v1.0 — Hackathon Demo
+> **Cross-Cutting**: Every phase must include comprehensive documentation — JSDoc/docstrings on all functions, workflow docs, and module-level READMEs.
 
 ## Must-Haves (from SPEC)
 
@@ -18,15 +19,16 @@
 ### Phase 1: Infrastructure & Data Layer
 **Status**: ⬜ Not Started
 **Objective**: Set up AWS infrastructure, React app scaffold, and data ingestion pipeline
-**Time Budget**: ~3 hours
+**Time Budget**: ~12 hours
 **Deliverables**:
-- React app via Amplify (or local Vite for speed) with routing
+- React app deployed to AWS Amplify with routing
 - S3 bucket for document storage
 - DynamoDB table for interview sessions
-- Lambda functions scaffold with API Gateway
+- Python Lambda functions with API Gateway
 - Document ingestion: parse .docx sample data files with Textract
-- Web scraping module: fetch public company info from web sources
+- Web scraping module: fetch public company info (AWS-native, free)
 - Store processed data in S3/DynamoDB
+- Comprehensive documentation for all modules
 
 **Requirements**: Foundation for all subsequent phases
 
@@ -35,7 +37,7 @@
 ### Phase 2: AI Intelligence Engine
 **Status**: ⬜ Not Started
 **Objective**: Build the core AI pipeline that analyzes company data and generates interview materials
-**Time Budget**: ~3 hours
+**Time Budget**: ~20 hours
 **Deliverables**:
 - Bedrock/Claude integration for company analysis
 - Company profile generation from scraped + uploaded data
@@ -52,7 +54,7 @@
 ### Phase 3: Frontend & Two-Stage Workflow
 **Status**: ⬜ Not Started
 **Objective**: Build the complete UI and implement both stages of the interview workflow
-**Time Budget**: ~3 hours
+**Time Budget**: ~20 hours
 **Deliverables**:
 - **Interviewer Dashboard**: Input company name/URL → trigger analysis → view brief
 - **PDF Generation**: Render interviewer brief and interviewee packet as downloadable PDFs
@@ -67,7 +69,7 @@
 ### Phase 4: Integration, Polish & Demo Prep
 **Status**: ⬜ Not Started
 **Objective**: End-to-end integration testing, UI polish, and hackathon demo preparation
-**Time Budget**: ~3 hours
+**Time Budget**: ~20 hours
 **Deliverables**:
 - Full workflow smoke test with sample data
 - Error handling and loading states

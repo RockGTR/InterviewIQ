@@ -52,12 +52,14 @@ Updated Interview Guide for interviewer with interviewee preferences
 
 ## Constraints
 
-- **Timeline**: 12-hour hackathon — aggressive scoping required
+- **Timeline**: 72-hour hackathon (Feb 20–23, 2026)
 - **Team**: 4 developers, all AWS-experienced
-- **Stack**: React frontend (AWS Amplify), AWS Lambda, API Gateway, S3, DynamoDB, Amazon Bedrock (Claude), Amazon Comprehend, Amazon Textract
-- **Data**: 5 sample hackathon case files (.docx) in `data/` directory + automated web scraping for public info
+- **Stack**: React frontend (AWS Amplify), Python Lambda backend, API Gateway, S3, DynamoDB, Amazon Bedrock (Claude), Amazon Comprehend, Amazon Textract
+- **Regions**: us-west-2, us-east-1
+- **Data**: 5 sample hackathon case files (.docx) in `data/` — each contains pre-interview brief + full interview transcript (exemplar format). Automated web scraping for public company data.
 - **No authentication**: Demo-quality, single-user experience
-- **Budget**: AWS Free Tier / hackathon credits
+- **Budget**: AWS hackathon credits
+- **Documentation**: Comprehensive docs required — every function has JSDoc/docstrings, all workflows documented, README at project and module level
 
 ## Success Criteria
 

@@ -1,0 +1,400 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Description: >
+  InterviewIQ - AI-Powered Interview Intelligence System for Texas A&M.
+  This SAM template provisions all core AWS resources: S3 storage, DynamoDB
+  tables, IAM roles, Lambda Layer, Lambda functions, API Gateway, and
+  Step Functions state machine for the interview intelligence pipeline.
+
+# =============================================================================
+# PARAMETERS
+# =============================================================================
+Parameters:
+  # The Bedrock model ID for Claude. Configurable per environment.
+  BedrockModelId:
+    Type: String
+    Default: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+    Description: "Amazon Bedrock model ID for AI generation"
+
+  # Deployment stage name (dev, staging, prod)
+  StageName:
+    Type: String
+    Default: "dev"
+    Description: "API Gateway deployment stage"
+
+  # AWS region for Bedrock (may differ from stack region)
+  BedrockRegion:
+    Type: String
+    Default: "us-east-1"
+    Description: "AWS region where Bedrock model is available"
+
+# =============================================================================
+# GLOBALS — Shared config for all Lambda functions
+# =============================================================================
+Globals:
+  Function:
+    Runtime: python3.13
+    MemorySize: 256
+    Timeout: 30
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref InterviewSessionsTable
+        BUCKET_NAME: !Ref InterviewIQDocsBucket
+        MODEL_ID: !Ref BedrockModelId
+        BEDROCK_REGION: !Ref BedrockRegion
+        POWERTOOLS_SERVICE_NAME: interview-iq
+    Layers:
+      - !Ref SharedDepsLayer
+
+# =============================================================================
+# RESOURCES
+# =============================================================================
+Resources:
+
+  # ---------------------------------------------------------------------------
+  # S3 BUCKET — Document storage for uploads, PDFs, and generated briefs
+  # ---------------------------------------------------------------------------
+  InterviewIQDocsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "interview-iq-docs-${AWS::AccountId}-${AWS::Region}"
+      # CORS configuration allows frontend to upload/download documents directly
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders: ["*"]
+            AllowedMethods: [GET, PUT, POST, DELETE]
+            AllowedOrigins: ["*"]  # Restricted in production; open for hackathon
+            MaxAge: 3600
+      # Auto-cleanup after 30 days — hackathon data doesn't need persistence
+      LifecycleConfiguration:
+        Rules:
+          - Id: AutoCleanup
+            Status: Enabled
+            ExpirationInDays: 30
+
+  # ---------------------------------------------------------------------------
+  # DYNAMODB TABLE — Interview session metadata and state tracking
+  # ---------------------------------------------------------------------------
+  InterviewSessionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "interview-iq-sessions-${AWS::StackName}"
+      # On-demand billing: pay per request, no capacity planning needed
+      BillingMode: PAY_PER_REQUEST
+      # Primary key: sessionId (unique per interview preparation session)
+      AttributeDefinitions:
+        - AttributeName: sessionId
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: createdAt
+          AttributeType: S
+      KeySchema:
+        - AttributeName: sessionId
+          KeyType: HASH
+        - AttributeName: createdAt
+          KeyType: RANGE
+      # GSI for querying sessions by status (active, complete, etc.)
+      GlobalSecondaryIndexes:
+        - IndexName: StatusIndex
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: createdAt
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+
+  # ---------------------------------------------------------------------------
+  # LAMBDA LAYER — Shared Python dependencies for all functions
+  # ---------------------------------------------------------------------------
+  SharedDepsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: interview-iq-shared-deps
+      Description: >
+        Shared Python dependencies: boto3, requests, beautifulsoup4, python-docx.
+        Built via backend/layers/shared/build_layer.sh
+      ContentUri: layers/shared/
+      CompatibleRuntimes:
+        - python3.13
+      RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: python3.13
+
+  # ---------------------------------------------------------------------------
+  # API GATEWAY — REST API for frontend-backend communication
+  # ---------------------------------------------------------------------------
+  InterviewIQApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: InterviewIQ-API
+      StageName: !Ref StageName
+      Description: "REST API for InterviewIQ interview intelligence system"
+      # Enable CORS for all origins (hackathon; restrict in production)
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+
+  # ---------------------------------------------------------------------------
+  # LAMBDA FUNCTIONS — One per API endpoint / pipeline step
+  # ---------------------------------------------------------------------------
+
+  # Health check endpoint — verifies API is operational
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-health
+      Description: "Health check endpoint — returns system status and service availability"
+      CodeUri: functions/health/
+      Handler: handler.lambda_handler
+      Events:
+        HealthCheck:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /health
+            Method: get
+
+  # Create a new interview preparation session
+  CreateSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-create-session
+      Description: "Creates a new interview preparation session with company details"
+      CodeUri: functions/create_session/
+      Handler: handler.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+      Events:
+        CreateSession:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /sessions
+            Method: post
+
+  # Retrieve session data by ID
+  GetSessionFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-get-session
+      Description: "Retrieves interview session data including briefs and feedback"
+      CodeUri: functions/get_session/
+      Handler: handler.lambda_handler
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref InterviewSessionsTable
+        - S3ReadPolicy:
+            BucketName: !Ref InterviewIQDocsBucket
+      Events:
+        GetSession:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /sessions/{sessionId}
+            Method: get
+
+  # Trigger web scraping for a company
+  ScrapeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-scrape
+      Description: "Scrapes public company information from web sources"
+      CodeUri: functions/scrape_company/
+      Handler: handler.lambda_handler
+      Timeout: 300  # 5 min — web scraping can be slow
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+        - S3CrudPolicy:
+            BucketName: !Ref InterviewIQDocsBucket
+      Events:
+        Scrape:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /scrape
+            Method: post
+
+  # Process uploaded documents via Textract
+  ParseDocumentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-parse-document
+      Description: "Processes uploaded documents via Textract for text extraction"
+      CodeUri: functions/parse_document/
+      Handler: handler.lambda_handler
+      Timeout: 300  # 5 min — Textract can be slow on large docs
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+        - S3CrudPolicy:
+            BucketName: !Ref InterviewIQDocsBucket
+        - TextractPolicy: {}
+      Events:
+        ParseDocument:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /parse
+            Method: post
+
+  # Analyze text with Amazon Comprehend
+  AnalyzeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-analyze
+      Description: "Analyzes company text using Amazon Comprehend for NLP enrichment"
+      CodeUri: functions/analyze_company/
+      Handler: handler.lambda_handler
+      Timeout: 60
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+        - ComprehendBasicAccessPolicy: {}
+      Events:
+        Analyze:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /analyze
+            Method: post
+
+  # Generate interview brief via Bedrock/Claude
+  GenerateBriefFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-generate-brief
+      Description: "Generates interview brief and questions using Amazon Bedrock Claude"
+      CodeUri: functions/generate_brief/
+      Handler: handler.lambda_handler
+      Timeout: 300  # 5 min — Bedrock generation can take time
+      MemorySize: 512
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+        - S3CrudPolicy:
+            BucketName: !Ref InterviewIQDocsBucket
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+                - bedrock:InvokeModelWithResponseStream
+              Resource: "*"
+      Events:
+        GenerateBrief:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /generate
+            Method: post
+
+  # Submit interviewee feedback (corrections + selected questions)
+  SubmitFeedbackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-submit-feedback
+      Description: "Stores interviewee corrections and selected questions"
+      CodeUri: functions/submit_feedback/
+      Handler: handler.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+      Events:
+        SubmitFeedback:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /sessions/{sessionId}/feedback
+            Method: post
+
+  # Start the full interview intelligence pipeline
+  StartPipelineFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: interview-iq-start-pipeline
+      Description: "Triggers the Step Functions pipeline for end-to-end interview prep"
+      CodeUri: functions/start_pipeline/
+      Handler: handler.lambda_handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref InterviewSessionsTable
+        - StepFunctionsExecutionPolicy:
+            StateMachineName: !GetAtt InterviewPipeline.Name
+      Environment:
+        Variables:
+          STATE_MACHINE_ARN: !Ref InterviewPipeline
+      Events:
+        StartPipeline:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /pipeline
+            Method: post
+        GetPipelineStatus:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterviewIQApi
+            Path: /pipeline/{executionId}
+            Method: get
+
+  # ---------------------------------------------------------------------------
+  # STEP FUNCTIONS — Interview intelligence pipeline orchestration
+  # ---------------------------------------------------------------------------
+  InterviewPipeline:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: interview-iq-pipeline
+      DefinitionUri: statemachine/interview_pipeline.asl.json
+      DefinitionSubstitutions:
+        CreateSessionFunctionArn: !GetAtt CreateSessionFunction.Arn
+        ScrapeFunctionArn: !GetAtt ScrapeFunction.Arn
+        ParseDocumentFunctionArn: !GetAtt ParseDocumentFunction.Arn
+        AnalyzeFunctionArn: !GetAtt AnalyzeFunction.Arn
+        GenerateBriefFunctionArn: !GetAtt GenerateBriefFunction.Arn
+        GetSessionFunctionArn: !GetAtt GetSessionFunction.Arn
+      Policies:
+        - LambdaInvokePolicy:
+            FunctionName: !Ref CreateSessionFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ScrapeFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref ParseDocumentFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref AnalyzeFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GenerateBriefFunction
+        - LambdaInvokePolicy:
+            FunctionName: !Ref GetSessionFunction
+
+# =============================================================================
+# OUTPUTS — Resource identifiers for reference and frontend configuration
+# =============================================================================
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${InterviewIQApi}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+
+  BucketName:
+    Description: "S3 bucket for document storage"
+    Value: !Ref InterviewIQDocsBucket
+
+  TableName:
+    Description: "DynamoDB table for session data"
+    Value: !Ref InterviewSessionsTable
+
+  StateMachineArn:
+    Description: "Step Functions state machine ARN"
+    Value: !Ref InterviewPipeline
+
+  SharedLayerArn:
+    Description: "Shared Lambda Layer ARN"
+    Value: !Ref SharedDepsLayer

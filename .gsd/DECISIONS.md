@@ -25,5 +25,39 @@
 
 ## ADR-005: Data Collection
 **Date**: 2026-02-20
-**Decision**: Automated web scraping + sample .docx data files
+**Decision**: Automated web scraping (AWS-native, free tier) + sample .docx data files via Textract
 **Rationale**: Web scraping for public info demonstrates real-world capability. Sample docs simulate proprietary Texas A&M data. No LinkedIn (ToS risk).
+
+---
+
+## Phase 1 Decisions (from `/discuss-phase 1`)
+
+### ADR-006: AWS-First Architecture
+**Date**: 2026-02-20
+**Decision**: Deploy to AWS from the start — Lambda, API Gateway, S3, DynamoDB, Bedrock
+**Rationale**: Team is 4 AWS experts. 72-hour timeline is generous. Real AWS infra demonstrates production-readiness to judges.
+**Alternatives**: Local-first development (rejected — not needed with 72h and AWS expertise)
+
+### ADR-007: Python Backend
+**Date**: 2026-02-20
+**Decision**: Python for all Lambda functions and backend logic
+**Rationale**: Better AI/ML library ecosystem, easier Bedrock SDK, team preference.
+**Alternatives**: Node.js/TypeScript (rejected)
+
+### ADR-008: Textract for Document Parsing
+**Date**: 2026-02-20
+**Decision**: Use Amazon Textract for .docx parsing
+**Rationale**: Demonstrates AWS service integration. Team wants to showcase Textract usage.
+
+### ADR-009: Timeline Correction
+**Date**: 2026-02-20
+**Decision**: Hackathon is 72 hours (not 12h). Regions: us-west-2, us-east-1.
+**Rationale**: AWS event dashboard confirms 72h duration. More time = higher polish, better docs.
+
+### ADR-010: Sample Data as Exemplars
+**Date**: 2026-02-20
+**Decision**: The 5 .docx case files serve as BOTH training exemplars AND demo data
+**Rationale**: Each file contains a pre-interview AI brief + full interview transcript — exactly the output format our system should produce. Use them to:
+  1. Train/prompt the AI on expected output format
+  2. Provide demo data for showcasing the system
+  3. Serve as the "proprietary Texas A&M data" source

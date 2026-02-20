@@ -1,0 +1,13 @@
+# SAM deployment configuration for InterviewIQ
+# This file is auto-generated and can be customized per environment.
+
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "interview-iq"
+resolve_s3 = true
+s3_prefix = "interview-iq"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM CAPABILITY_AUTO_EXPAND"
+image_repositories = []
