@@ -29,9 +29,7 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "shared"))
-from response_helpers import success_response, error_response, parse_body
+from shared.response_helpers import success_response, error_response, parse_body
 
 import boto3
 

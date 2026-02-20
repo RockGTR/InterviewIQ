@@ -24,12 +24,10 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "shared"))
-from response_helpers import success_response, error_response, parse_body
-from comprehend_service import ComprehendService
-from dynamo_service import DynamoDBService
-from s3_service import S3Service
+from shared.response_helpers import success_response, error_response, parse_body
+from shared.comprehend_service import ComprehendService
+from shared.dynamo_service import DynamoDBService
+from shared.s3_service import S3Service
 
 
 def lambda_handler(event: dict, context) -> dict:

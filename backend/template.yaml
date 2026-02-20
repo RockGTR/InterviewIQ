@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 
 Description: >
@@ -53,7 +53,6 @@ Globals:
 # RESOURCES
 # =============================================================================
 Resources:
-
   # ---------------------------------------------------------------------------
   # S3 BUCKET — Document storage for uploads, PDFs, and generated briefs
   # ---------------------------------------------------------------------------
@@ -66,7 +65,7 @@ Resources:
         CorsRules:
           - AllowedHeaders: ["*"]
             AllowedMethods: [GET, PUT, POST, DELETE]
-            AllowedOrigins: ["*"]  # Restricted in production; open for hackathon
+            AllowedOrigins: ["*"] # Restricted in production; open for hackathon
             MaxAge: 3600
       # Auto-cleanup after 30 days — hackathon data doesn't need persistence
       LifecycleConfiguration:
@@ -123,7 +122,7 @@ Resources:
         - python3.13
       RetentionPolicy: Delete
     Metadata:
-      BuildMethod: python3.13
+      BuildMethod: makefile
 
   # ---------------------------------------------------------------------------
   # API GATEWAY — REST API for frontend-backend communication
@@ -208,7 +207,7 @@ Resources:
       Description: "Scrapes public company information from web sources"
       CodeUri: functions/scrape_company/
       Handler: handler.lambda_handler
-      Timeout: 300  # 5 min — web scraping can be slow
+      Timeout: 300 # 5 min — web scraping can be slow
       MemorySize: 512
       Policies:
         - DynamoDBCrudPolicy:
@@ -231,7 +230,7 @@ Resources:
       Description: "Processes uploaded documents via Textract for text extraction"
       CodeUri: functions/parse_document/
       Handler: handler.lambda_handler
-      Timeout: 300  # 5 min — Textract can be slow on large docs
+      Timeout: 300 # 5 min — Textract can be slow on large docs
       MemorySize: 512
       Policies:
         - DynamoDBCrudPolicy:
@@ -276,7 +275,7 @@ Resources:
       Description: "Generates interview brief and questions using Amazon Bedrock Claude"
       CodeUri: functions/generate_brief/
       Handler: handler.lambda_handler
-      Timeout: 300  # 5 min — Bedrock generation can take time
+      Timeout: 300 # 5 min — Bedrock generation can take time
       MemorySize: 512
       Policies:
         - DynamoDBCrudPolicy:

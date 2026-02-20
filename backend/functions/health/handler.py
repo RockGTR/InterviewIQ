@@ -20,9 +20,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 # Import shared modules (available via Lambda Layer)
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "shared"))
-from response_helpers import success_response, error_response
+from shared.response_helpers import success_response, error_response
 
 
 def lambda_handler(event: dict, context) -> dict:
