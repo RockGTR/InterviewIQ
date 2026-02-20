@@ -48,7 +48,11 @@ def lambda_handler(event: dict, context) -> dict:
     except (ValueError, Exception) as e:
         return error_response(f"Invalid request body: {e}", 400)
 
+    # Support both API Gateway (body.sessionId) and Step Functions (body.sessionResult.sessionId)
     session_id = body.get("sessionId")
+    if not session_id:
+        session_result = body.get("sessionResult", {})
+        session_id = session_result.get("sessionId")
     if not session_id:
         return error_response("sessionId is required", 400)
 

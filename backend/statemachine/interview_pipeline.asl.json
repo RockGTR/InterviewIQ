@@ -153,7 +153,7 @@
       "Comment": "Runs NLP analysis (entities, key phrases, sentiment) on gathered data using Comprehend.",
       "Resource": "${AnalyzeFunctionArn}",
       "Parameters": {
-        "body.$": "States.Format('{\"sessionId\": \"{}\"}', $.sessionResult.sessionId)",
+        "body.$": "States.JsonToString($)",
         "httpMethod": "POST"
       },
       "ResultPath": "$.analysisResult",
@@ -184,7 +184,7 @@
       "Comment": "Generates the interviewer brief and interviewee packet using Bedrock/Claude. This is the core AI step.",
       "Resource": "${GenerateBriefFunctionArn}",
       "Parameters": {
-        "body.$": "States.Format('{\"sessionId\": \"{}\"}', $.sessionResult.sessionId)",
+        "body.$": "States.JsonToString($)",
         "httpMethod": "POST"
       },
       "ResultPath": "$.briefResult",
