@@ -1,16 +1,57 @@
-# React + Vite
+# InterviewIQ Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + Vite application for the InterviewIQ interview intelligence system.
 
-Currently, two official plugins are available:
+## Setup
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+npm install
+npm run dev        # → http://localhost:5173
+npm run build      # → dist/
+```
 
-## React Compiler
+## Pages
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Route | Component | Purpose |
+|-------|-----------|---------|
+| `/` | `HomePage` | Company input form, feature grid, hero section |
+| `/dashboard/:id` | `InterviewerDashboard` | View AI-generated brief, questions, company profile |
+| `/interview/:id` | `IntervieweePortal` | Review AI findings, correct inaccuracies, select questions |
+| `/guide/:id` | `InterviewGuide` | Updated guide with interviewee feedback incorporated |
 
-## Expanding the ESLint configuration
+## Components
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- **Header** — Navigation bar with glassmorphism, gradient logo, active route highlighting
+- **Layout** — Page wrapper with header and padded content area
+
+## API Service
+
+`src/services/api.js` — Fetch-based client for all backend endpoints.
+
+```javascript
+import api from '../services/api';
+
+// Set API base URL (update after deployment)
+// Edit the API_BASE constant in api.js
+
+const session = await api.createSession({ companyName: 'GridFlex Energy' });
+const data = await api.getSession(sessionId);
+```
+
+## Design System
+
+CSS variables defined in `src/index.css`:
+
+- **Theme**: Dark (`--bg-primary: #0a0a0f`)
+- **Accent**: Gradient purple-cyan (`--accent-primary: #6366f1`)
+- **Font**: System sans-serif stack
+- **Effects**: Glassmorphism, gradient borders, hover animations
+
+## Deploy
+
+Build spec in `amplify.yml` for AWS Amplify:
+```yaml
+preBuild: npm ci
+build: npm run build
+output: dist
+```
