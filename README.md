@@ -10,20 +10,20 @@ InterviewIQ transforms interview preparation by using AI to analyze company data
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    AWS AMPLIFY (Frontend)                    │
+│                    AWS AMPLIFY (Frontend)                   │
 │           React + Vite • Dark Theme • 4 Routes              │
-│  ┌──────────┐ ┌──────────────┐ ┌──────────┐ ┌───────────┐  │
+│  ┌──────────┐ ┌──────────────┐ ┌──────────┐ ┌───────────┐   │
 │  │ HomePage  │ │  Dashboard   │ │ Portal   │ │   Guide   │  │
 │  │ (input)   │ │ (interviewer)│ │(interviewee)│ (final)  │  │
 │  └─────┬─────┘ └──────┬───────┘ └────┬─────┘ └─────┬─────┘  │
-└────────┼───────────────┼──────────────┼──────────────┼───────┘
+└────────┼───────────────┼──────────────┼──────────────┼──────┘
          │               │              │              │
          ▼               ▼              ▼              ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                  API GATEWAY (REST, /dev)                    │
+│                  API GATEWAY (REST, /dev)                   │
 │  POST /pipeline  GET /sessions/{id}  POST /sessions/{id}/fb │
 │  POST /sessions  POST /scrape  POST /parse  POST /analyze   │
-│  POST /generate  GET /health                                 │
+│  POST /generate  GET /health                                │
 └────────────────────────────┬────────────────────────────────┘
                              │
          ┌───────────────────┼───────────────────┐
