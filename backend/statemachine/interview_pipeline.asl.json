@@ -7,14 +7,16 @@
       "Comment": "Creates a new interview session in DynamoDB with the provided company details.",
       "Resource": "${CreateSessionFunctionArn}",
       "Parameters": {
-        "body.$": "States.JsonToString($.Payload)",
+        "body.$": "States.JsonToString($)",
         "httpMethod": "POST"
       },
-      "InputPath": "$",
       "ResultPath": "$.sessionResult",
       "Retry": [
         {
-          "ErrorEquals": ["States.TaskFailed", "Lambda.ServiceException"],
+          "ErrorEquals": [
+            "States.TaskFailed",
+            "Lambda.ServiceException"
+          ],
           "IntervalSeconds": 2,
           "MaxAttempts": 3,
           "BackoffRate": 2
@@ -22,14 +24,15 @@
       ],
       "Catch": [
         {
-          "ErrorEquals": ["States.ALL"],
+          "ErrorEquals": [
+            "States.ALL"
+          ],
           "Next": "PipelineFailed",
           "ResultPath": "$.error"
         }
       ],
       "Next": "ParallelDataGathering"
     },
-
     "ParallelDataGathering": {
       "Type": "Parallel",
       "Comment": "Runs web scraping and document parsing in parallel to maximize throughput.",
@@ -47,7 +50,9 @@
               },
               "Retry": [
                 {
-                  "ErrorEquals": ["States.TaskFailed"],
+                  "ErrorEquals": [
+                    "States.TaskFailed"
+                  ],
                   "IntervalSeconds": 5,
                   "MaxAttempts": 2,
                   "BackoffRate": 2
@@ -55,7 +60,9 @@
               ],
               "Catch": [
                 {
-                  "ErrorEquals": ["States.ALL"],
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
                   "Next": "ScrapeFailedFallback",
                   "ResultPath": "$.scrapeError"
                 }
@@ -98,7 +105,9 @@
               },
               "Retry": [
                 {
-                  "ErrorEquals": ["States.TaskFailed"],
+                  "ErrorEquals": [
+                    "States.TaskFailed"
+                  ],
                   "IntervalSeconds": 3,
                   "MaxAttempts": 2,
                   "BackoffRate": 2
@@ -106,7 +115,9 @@
               ],
               "Catch": [
                 {
-                  "ErrorEquals": ["States.ALL"],
+                  "ErrorEquals": [
+                    "States.ALL"
+                  ],
                   "Next": "NoDocuments",
                   "ResultPath": "$.parseError"
                 }
@@ -128,14 +139,15 @@
       "ResultPath": "$.gatheringResults",
       "Catch": [
         {
-          "ErrorEquals": ["States.ALL"],
+          "ErrorEquals": [
+            "States.ALL"
+          ],
           "Next": "PipelineFailed",
           "ResultPath": "$.error"
         }
       ],
       "Next": "AnalyzeWithComprehend"
     },
-
     "AnalyzeWithComprehend": {
       "Type": "Task",
       "Comment": "Runs NLP analysis (entities, key phrases, sentiment) on gathered data using Comprehend.",
@@ -147,7 +159,9 @@
       "ResultPath": "$.analysisResult",
       "Retry": [
         {
-          "ErrorEquals": ["States.TaskFailed"],
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
           "IntervalSeconds": 3,
           "MaxAttempts": 2,
           "BackoffRate": 2
@@ -155,7 +169,9 @@
       ],
       "Catch": [
         {
-          "ErrorEquals": ["States.ALL"],
+          "ErrorEquals": [
+            "States.ALL"
+          ],
           "Next": "GenerateBrief",
           "Comment": "If analysis fails, still try to generate brief with available data.",
           "ResultPath": "$.analysisError"
@@ -163,7 +179,6 @@
       ],
       "Next": "GenerateBrief"
     },
-
     "GenerateBrief": {
       "Type": "Task",
       "Comment": "Generates the interviewer brief and interviewee packet using Bedrock/Claude. This is the core AI step.",
@@ -175,7 +190,9 @@
       "ResultPath": "$.briefResult",
       "Retry": [
         {
-          "ErrorEquals": ["States.TaskFailed"],
+          "ErrorEquals": [
+            "States.TaskFailed"
+          ],
           "IntervalSeconds": 10,
           "MaxAttempts": 2,
           "BackoffRate": 2
@@ -183,19 +200,19 @@
       ],
       "Catch": [
         {
-          "ErrorEquals": ["States.ALL"],
+          "ErrorEquals": [
+            "States.ALL"
+          ],
           "Next": "PipelineFailed",
           "ResultPath": "$.error"
         }
       ],
       "Next": "PipelineComplete"
     },
-
     "PipelineComplete": {
       "Type": "Succeed",
       "Comment": "Pipeline completed successfully. Interviewer brief and interviewee packet are ready."
     },
-
     "PipelineFailed": {
       "Type": "Fail",
       "Comment": "Pipeline failed at some step. Check error details for root cause.",

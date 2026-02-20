@@ -328,6 +328,12 @@ Resources:
             TableName: !Ref InterviewSessionsTable
         - StepFunctionsExecutionPolicy:
             StateMachineName: !GetAtt InterviewPipeline.Name
+        - Statement:
+            - Effect: Allow
+              Action:
+                - states:DescribeExecution
+                - states:ListExecutions
+              Resource: !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:execution:interview-iq-pipeline:*"
       Environment:
         Variables:
           STATE_MACHINE_ARN: !Ref InterviewPipeline
